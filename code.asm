@@ -16,7 +16,9 @@ ExitProcess PROTO, dwExitCode:DWORD
 	displayTask byte "press 3 for display tasks in TODO List",0
 	prompt byte "enter a number : ",0
 	errorPrompt byte "please enter choice between 1-3",0
+	taskPrompt byte "enter your task name",0
 	value dword ?
+	
 
 .code
 main PROC
@@ -32,15 +34,23 @@ main PROC
 	mov value , eax
 	cmp value , 3
 	ja L1
-	cmp value , 3
+	cmp value , 4
 	jb L2
 	L1:
 		mov edx, offset errorPrompt	
 		call writeString
 		call crlf
 	L2:
+		cmp value , 1
+		je L3
 		ret
-
+	L3:
+		mov edx, offset taskPrompt	
+		call writeString
+		call crlf
+		call readint
+		call writeDec
+		ret
 
 	INVOKE ExitProcess,0
 main ENDP
