@@ -23,7 +23,7 @@ ExitProcess PROTO, dwExitCode:DWORD
 	bracketPrompt byte " ) ",0
 	value dword ?
 	byteCount dword ?
-	taskArray byte 80 Dup(?)
+	taskArray byte 40 Dup(?)
 	
 
 .code
