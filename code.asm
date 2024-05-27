@@ -24,49 +24,74 @@ ExitProcess PROTO, dwExitCode:DWORD
 	value dword ?
 	byteCount dword ?
 	taskArray byte 40 Dup(?)
+	againMSG BYTE 0Ah,0Dh,"Do you want to run again (Y/N) : ",0
+	op BYTE ?
+
 	
 
 .code
 main PROC
-	mov edx, offset projectName
-	call writeString
-	call crlf
+startLB:
+		mov edx, offset projectName
+		call writeString
+		call crlf
 
-	call menu
+		call menu
 
-	mov edx , offset prompt
-	call writeString
-	call readInt
-	mov value , eax
-	cmp value , 4
-	jae L1
-	cmp value , 4
-	jb L2
-	L1:
-		mov edx, offset errorPrompt	
+		mov edx , offset prompt
 		call writeString
-		call crlf
-	L2:
-		cmp value , 1
-		je L3
-		ret
-	L3:
-		mov edx, offset taskPrompt	
-		call writeString
-		call crlf
-		mov edx, offset taskArray
-		mov ecx , sizeof taskArray
-		call readString
-		mov byteCount , eax
-		mov edx, offset lengthPrompt
-		call writeString
-		call writeDec
-		call crlf
-		mov edx , offset pushPrompt
-		call writeString
-		call crlf
-		call printList
-		ret
+		call readInt
+		mov value , eax
+		cmp value , 4
+		jae L1
+		cmp value , 4
+		jb L2
+		L1:
+			mov edx, offset errorPrompt	
+			call writeString
+			call crlf
+			jmp againLB
+
+
+		L2:
+			cmp value , 1
+			je L3
+			ret
+		L3:
+			mov edx, offset taskPrompt	
+			call writeString
+			call crlf
+			mov edx, offset taskArray
+			mov ecx , sizeof taskArray
+			call readString
+			mov byteCount , eax
+			mov edx, offset lengthPrompt
+			call writeString
+			call writeDec
+			call crlf
+			mov edx , offset pushPrompt
+			call writeString
+			call crlf
+			call printList
+			jmp againLB
+
+			ret
+			againLB:
+				mov edx, offset againMSG
+				call WriteString
+
+				call ReadChar
+				call WriteChar
+				call Crlf
+		
+				mov op, al
+				cmp op, 'Y'
+				je startLB
+				cmp op, 'y'
+				je startLB
+
+	ExitLB:
+
 
 	INVOKE ExitProcess,0
 main ENDP
