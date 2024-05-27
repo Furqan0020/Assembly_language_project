@@ -17,7 +17,13 @@ ExitProcess PROTO, dwExitCode:DWORD
 	prompt byte "enter a number : ",0
 	errorPrompt byte "please enter choice between 1-3",0
 	taskPrompt byte "enter your task name",0
+	lengthPrompt byte "your task length is : ",0
+	pushPrompt byte " Enter successfully in list. ",0
+	outputPrompt byte "OutPut of taks Menu ", 0
+	bracketPrompt byte " ) ",0
 	value dword ?
+	byteCount dword ?
+	taskArray byte 80 Dup(?)
 	
 
 .code
@@ -32,8 +38,8 @@ main PROC
 	call writeString
 	call readInt
 	mov value , eax
-	cmp value , 3
-	ja L1
+	cmp value , 4
+	jae L1
 	cmp value , 4
 	jb L2
 	L1:
@@ -48,8 +54,18 @@ main PROC
 		mov edx, offset taskPrompt	
 		call writeString
 		call crlf
-		call readint
+		mov edx, offset taskArray
+		mov ecx , sizeof taskArray
+		call readString
+		mov byteCount , eax
+		mov edx, offset lengthPrompt
+		call writeString
 		call writeDec
+		call crlf
+		mov edx , offset pushPrompt
+		call writeString
+		call crlf
+		call printList
 		ret
 
 	INVOKE ExitProcess,0
@@ -67,6 +83,28 @@ menu proc
 	mov edx , offset displayTask
 	call writeString
 	call crlf
+	
 	ret
 	menu EndP
+
+	printList proc
+		mov edx, offset outputPrompt
+		call writeString
+		call crlf
+		mov esi , 0
+		mov eax, 0
+		mov eax, esi
+		Inc eax
+		call writeDec
+		mov ecx, lengthOf taskArray
+		mov edx, offset bracketPrompt
+		call writeString
+		counter:
+		
+			mov al , taskArray[esi]
+			inc esi
+			call writeChar
+			Loop counter
+			ret
+	printList endp
 END main
